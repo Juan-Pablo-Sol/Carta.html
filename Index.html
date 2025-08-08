@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Feliz Cumpleaños Osito</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #fff8f0;
+        text-align: center;
+        padding-top: 50px;
+    }
+    h2 {
+        color: #ff6f61;
+    }
+    .envelope {
+        width: 220px;
+        height: 150px;
+        background: #ff9999;
+        position: relative;
+        margin: auto;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .envelope:hover {
+        transform: scale(1.05);
+    }
+    .flap {
+        width: 0;
+        height: 0;
+        border-left: 110px solid transparent;
+        border-right: 110px solid transparent;
+        border-bottom: 75px solid #ffb3b3;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.5s;
+        transform-origin: top;
+    }
+    .letter {
+        width: 200px;
+        height: 0;
+        background: white;
+        position: absolute;
+        top: 75px;
+        left: 10px;
+        overflow: hidden;
+        transition: height 1s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        padding: 0 10px;
+        border-radius: 5px;
+    }
+    .letter h3 {
+        color: #ff6f61;
+        margin-top: 10px;
+    }
+    .letter p {
+        color: #444;
+    }
+    .open .flap {
+        transform: rotateX(180deg);
+    }
+    .open .letter {
+        height: 220px;
+    }
+    /* Confeti */
+    .confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 999;
+    }
+</style>
+</head>
+<body>
+
+<h2>📩 Haz clic en el sobre para abrir tu carta</h2>
+
+<div class="envelope" id="sobre">
+    <div class="flap"></div>
+    <div class="letter">
+        <h3>🎉 Feliz cumpleaños, Osito 🐻</h3>
+        <p>
+        Hoy es un día tan especial como tú.<br><br>
+        Me siento afortunado(a) de tenerte en mi vida.<br>
+        Eres mi alegría, mi apoyo y mi razón para sonreír.<br><br>
+        Que este nuevo año te traiga abrazos cálidos, momentos inolvidables<br>
+        y todos los sueños que tu corazón pueda imaginar.<br><br>
+        Con todo mi cariño,<br>
+        <b>Juan Pablo ❤️</b>
+        </p>
+    </div>
+</div>
+
+<canvas class="confetti" id="confetti"></canvas>
+
+<script>
+    const sobre = document.getElementById("sobre");
+    const confettiCanvas = document.getElementById("confetti");
+    const ctx = confettiCanvas.getContext("2d");
+    let confettiPieces = [];
+
+    function resizeCanvas() {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function createConfetti() {
+        const colors = ["#ff6f61", "#ffb3b3", "#ffd966", "#a3d2ca", "#f5b7b1"];
+        for (let i = 0; i < 150; i++) {
+            confettiPieces.push({
+                x: Math.random() * confettiCanvas.width,
+                y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                r: Math.random() * 6 + 4,
+                d: Math.random() * 0.5 + 0.5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                tilt: Math.random() * 10 - 10
+            });
+        }
+    }
+
+    function drawConfetti() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confettiPieces.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, false);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        });
+        updateConfetti();
+    }
+
+    function updateConfetti() {
+        confettiPieces.forEach(p => {
+            p.y += p.d * 5;
+            if (p.y > confettiCanvas.height) {
+                p.y = -10;
+                p.x = Math.random() * confettiCanvas.width;
+            }
+        });
+    }
+
+    let confettiInterval;
+
+    sobre.addEventListener("click", function(){
+        this.classList.toggle("open");
+        if (this.classList.contains("open")) {
+            createConfetti();
+            confettiInterval = setInterval(drawConfetti, 20);
+            setTimeout(() => clearInterval(confettiInterval), 5000);
+        }
+    });
+</script>
+
+</body>
+</html>
